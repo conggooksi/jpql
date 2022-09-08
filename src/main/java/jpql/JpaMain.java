@@ -14,26 +14,41 @@ public class JpaMain {
 
         try {
 
-            Team team = new Team();
-            team.setName("teamA");
-            em.persist(team);
+            Team teamA = new Team();
+            teamA.setName("팀A");
+            em.persist(teamA);
 
+            Team teamB = new Team();
+            teamB.setName("팀B");
+            em.persist(teamB);
 
-            Member member = new Member();
-            member.setUsername("member1");
-            member.setAge(10);
-            member.setTeam(team);
+            Member member1 = new Member();
+            member1.setUsername("회원1");
+            member1.setTeam(teamA);
+            em.persist(member1);
 
-            em.persist(member);
+            Member member2 = new Member();
+            member2.setUsername("회원2");
+            member2.setTeam(teamA);
+            em.persist(member2);
+
+            Member member3 = new Member();
+            member3.setUsername("회원2");
+            member3.setTeam(teamB);
+            em.persist(member3);
 
             em.flush();
             em.clear();
 
-            String query = "select coalesce(m.username, '이름 없는 회원') from Member m";
-            List<String> result = em.createQuery(query, String.class).getResultList();
+            String query = "select distinct t from Team t join fetch t.members";
+            List<Team> result = em.createQuery(query, Team.class).getResultList();
 
-            for (String s : result) {
-                System.out.println("s = " + s);
+            for (Team team : result) {
+                System.out.println("team = " + team.getName());
+                for (Member member : team.getMembers()) {
+                    System.out.println("member = " + member);
+                }
+                
             }
 
             tx.commit();
