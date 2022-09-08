@@ -40,16 +40,10 @@ public class JpaMain {
             em.flush();
             em.clear();
 
-            String query = "select distinct t from Team t join fetch t.members";
-            List<Team> result = em.createQuery(query, Team.class).getResultList();
+            int resultCount = em.createQuery("update Member m set m.age = 20")
+                    .executeUpdate();
 
-            for (Team team : result) {
-                System.out.println("team = " + team.getName());
-                for (Member member : team.getMembers()) {
-                    System.out.println("member = " + member);
-                }
-                
-            }
+            System.out.println("resultCount = " + resultCount);
 
             tx.commit();
         } catch (Exception e) {
